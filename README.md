@@ -26,5 +26,5 @@ Ptrue threshold for max accuracy (achieved TPR):
 <br><bold>ION</bold> SNPs 0.6786 (0.997)  INDELs 0.7863 (0.954)
 <br><bold>Illumina</bold> SNPs 0.3644 (0.995) INDELs 0.8021 (0.978)
 
-If you found GARFIELD-NGS useful please cite our paper:
-[ARTICLE]
+For additional information on GARFIELD-NGS useful see our paper pre-print:
+http://www.biorxiv.org/content/early/2017/06/14/149146
