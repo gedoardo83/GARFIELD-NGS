@@ -25,3 +25,4 @@ HOW TO PERFORM PREDICTIONS:
     perl Predict.pl --input tutorial/Test_ION.vcf --output tutorial/Test_ION_prediction.vcf --platform ion
     
 This will produce VCF files including the GARFIELD predictions for each variants. Predictions are addedd as separate tags in the INFO column of output VCF file, in the form [Sample_name]_true=[value].
+Multisample VCF can be processed. In this case, an independent tag reporting the CP value is added in INFO column for each sample in the format [Sample_name]_true=[value].
