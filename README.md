@@ -5,7 +5,7 @@ Version 1.0
 
 USAGE: perl Predict.pl --input input.vcf[.gz] --output output.vcf --platform [illumina/ion]
 
-GARFIELD-NGS is implemented as Perl script and requires java to perform predictions.
+GARFIELD-NGS is implemented as Perl script and requires java to perform predictions. Tool was tested on RHEL operating system v.7.2, with Perl v.5.16 and Java JDK 1.8.0_65. 
 
 Clone the current repository to any folder and then run the Predict.pl script from any location. All included files must be placed in the same folder as Predict.pl file. Temporary files are created during prediction process in the same folder of input.vcf file and automatically removed.
 
