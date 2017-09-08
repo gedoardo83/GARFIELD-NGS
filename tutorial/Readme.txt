@@ -19,10 +19,10 @@ HOW TO PERFORM PREDICTIONS:
 4. To perform predictions move to the GARFIELD-NGS folder and use the Predict.pl script, specifying the desired platform for prediction. 
 
     for Illumina file
-    perl Predict.pl --input tutorial/Test_ILM.vcf --output tutorial/Test_ILM_prediction.vcf --platform illumina
+    perl Predict.pl --input tutorial/Test_ILM.vcf.gz --output tutorial/Test_ILM_prediction.vcf --platform illumina
 
     for ION file
-    perl Predict.pl --input tutorial/Test_ION.vcf --output tutorial/Test_ION_prediction.vcf --platform ion
+    perl Predict.pl --input tutorial/Test_ION.vcf.gz --output tutorial/Test_ION_prediction.vcf --platform ion
     
 This will produce VCF files including the GARFIELD predictions for each variants. Predictions are addedd as separate tags in the INFO column of output VCF file, in the form [Sample_name]_true=[value].
 Multisample VCF can be processed. In this case, an independent tag reporting the CP value is added in INFO column for each sample in the format [Sample_name]_true=[value].
