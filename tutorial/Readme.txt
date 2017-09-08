@@ -1,8 +1,10 @@
 GARFIELD-NGS provides four different models optimized for SNPs and INDELs from Illumina or ION data. 
-The tool takes standard VCF4.2 files as input and produce a standard VCF output with prediction value(s) for each variant added to INFO column. The new tag has the form: [Sample_name]_true=[value].
-The tool requires VCF files produced by GATK Haplotypecaller or Unified Genotyper for Illumina data and VCF files produced by TVC (Torrent Variant Caller) for ION data.
+The tool takes standard VCF4.2 files (.vcf or compressed .vcf.gz) as input and produce a standard VCF output with prediction value(s) for each variant added to INFO column. The new tag has the form: [Sample_name]_true=[value].
 
-GARFIELD-NGS uses Perl and Java to perform prediction. Ensure that Perl 5 or greater and Java 
+The tool requires VCF files produced by GATK Haplotypecaller or Unified Genotyper for Illumina data and VCF files produced by TVC (Torrent Variant Caller) for ION data and expect standard .vcf or .vcf.gz extensions.
+GARFIELD-NGS uses Perl and Java to perform prediction. Ensure that Perl 5 or greater and Java 1.8 or greater are installed on your system. bgzip is also needed and available from your path to handle compressed VCF files. 
+
+HOW TO PERFORM PREDICTIONS:
 
 1. Move to desired folder for installation and clone the git repository by:
     
@@ -14,4 +16,12 @@ GARFIELD-NGS uses Perl and Java to perform prediction. Ensure that Perl 5 or gre
 
 3. The release include 2 VCF files in the tutorial folder for testing.
 
-4. To perform prediction
+4. To perform predictions move to the GARFIELD-NGS folder and use the Predict.pl script, specifying the desired platform for prediction. 
+
+    for Illumina file
+    perl Predict.pl --input tutorial/Test_ILM.vcf --output tutorial/Test_ILM_prediction.vcf --platform illumina
+
+    for ION file
+    perl Predict.pl --input tutorial/Test_ION.vcf --output tutorial/Test_ION_prediction.vcf --platform ion
+    
+This will produce VCF files including the GARFIELD predictions for each variants. Predictions are addedd as separate tags in the INFO column of output VCF file, in the form [Sample_name]_true=[value].
