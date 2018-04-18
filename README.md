@@ -19,6 +19,8 @@ The tool returns a standard VCF output and can thus be easily integrated in alre
 Predictions are made based on four deep learning models specifically trained on INDELs and SNPs from Illumina and ION platforms. Calculated CP value ranges from 0 to 1, with higher values associated to true variants.
 Variants with score below filtering threshold should be considered as false positive. 
 
+Please note that GARFIELD-NGS is optimized to work on single sample VCF. Multisample VCF are supported, but prediction value may be less reliable. Our prediction models are based on INFO column values that are computed per variant by variant callers, so in multi-sample files these values will be based on the cumulative data across all samples and this could alter prediction reliability on single samples.
+
 Suggested CP thresholds for filtering:
 <br><bold>ION</bold> SNPs 0.139  INDELs 0.320
 <br><bold>Illumina</bold> SNPs 0.025 INDELs 0.630
