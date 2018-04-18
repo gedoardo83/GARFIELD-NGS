@@ -186,7 +186,7 @@ foreach $myfile(@files) {
 	while ($row=<IN>) {
 		chomp($row);
 		@line = split(",", $row);
-		$scoredvar{$line[0]} .= ";".$sampleid."_true=$line[$#line]";
+		$scoredvar{$line[0]} .= ";".$sampleid."_true=".sprintf("%.3f",$line[$#line]);
 		$newheader{$sampleid} = "##INFO=<ID=".$sampleid."_true,Number=1,Type=Float,Description=\"GARFIELD prediction for variant in $sampleid sample\">\n"
 	}
 	close(IN);
