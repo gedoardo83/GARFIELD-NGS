@@ -121,6 +121,7 @@ while ($row=<IN>) {
 		
 		#Generate output
 		foreach $mykey(@relevant) {
+			if ($infos{$mykey} eq ".") {$infos{$mykey} = ""} #Manage missing values reported as . in VCF
 			$output .= ",$infos{$mykey}";
 		}
 		$output = $line[0]."_".$line[1]."_".$line[3]."_".$line[4].$output;
