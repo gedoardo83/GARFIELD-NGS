@@ -69,7 +69,7 @@ if ($inputvcf =~ /.vcf$/) {
 
 #Extract relevant values and generate table files for SNP/INDEL prediction, 1 for each sample in VCF. Multiallelic vars are not scored
 print "Reading file: $inputvcf...\n";
-my ($mykey, $headline, $mytag, $indelcount, $snpcount, $dropped, %output, $totalvars);
+my ($mykey, $headline, $mytag, $indelcount, $snpcount, $dropped, %output, $totalvars, $varid);
 
 while ($row=<IN>) {
 		next if ($row =~ /^##/); #Skip header lines
@@ -133,7 +133,7 @@ while ($row=<IN>) {
 		  }
 		}
 		
-		$output = $line[0]."_".$line[1]."_".$line[3]."_".$line[4].$output;
+		$varid = $line[0]."_".$line[1]."_".$line[3]."_".$line[4];
 		for ($h=9; $h<=$#line; $h++) {
 			if ($line[4] =~ /,/) { #Drop variants with multiple alleles and save them in separate file
 				$dropped++;
@@ -143,12 +143,12 @@ while ($row=<IN>) {
 			} elsif (length($line[3]) == length($line[4])) { #Save SNP table
 				$snpcount++;
 				open (TABLE, ">>$outpath/GARFIELD.$samples[$h].SNP.table");
-				print TABLE $output{$h}.",$GTS{$h}{GQ}\n";
+				print TABLE $varid.$output{$h}.",$GTS{$h}{GQ}\n";
 				close(TABLE);
 			} elsif (length($line[3]) != length($line[4])) { #Save INDEL table
 				$indelcount++;
 				open (TABLE, ">>$outpath/GARFIELD.$samples[$h].INDEL.table");
-				print TABLE $output{$h}.",$GTS{$h}{GQ}\n";
+				print TABLE $varid.$output{$h}.",$GTS{$h}{GQ}\n";
 				close(TABLE);
 			}
 		}
@@ -234,7 +234,7 @@ close(OUT);
 
 #Clean up temporary files
 print "Cleaning up temp files...\n\n";
-system("rm $outpath/GARFIELD.*");
+#system("rm $outpath/GARFIELD.*");
 
 my $end_time=time();
 
