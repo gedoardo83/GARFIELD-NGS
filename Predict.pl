@@ -45,16 +45,16 @@ my $start_time = time();
 my($outname, $outpath, $outsuffix) = fileparse($outfile);
 
 #Set relevant INFO tags based on platform
-if ($platform eq "illumina") { 
-	@relevant = ("BaseQRankSum","ClippingRankSum","ReadPosRankSum","DP","FS","MQ","MQRankSum","QD","SOR","QUAL"); 
+if ($platform eq "illumina") {
+	@relevant = ("BaseQRankSum","ClippingRankSum","ReadPosRankSum","DP","FS","MQ","MQRankSum","QD","SOR","QUAL");
 	$code = "ILM";
 } elsif ($platform eq "ion") {
-	$code = "ION";	
+	$code = "ION";
 	@relevant = ("FDP","FAO","QD","FSAF","FSAR","FXX","LEN","HRUN","RBI","VARB","STB","STBP","PB","PBP","MLLD","SSEN","SSEP","SSSB","QUAL");
 } else {die "FATAL! Only illumina or ion are admitted as platform\n"}
 
 #Check VCF input file existance
-if (!-f $inputvcf) {die "FATAL! File $inputvcf does not exist!"} 
+if (!-f $inputvcf) {die "FATAL! File $inputvcf does not exist!"}
 if (-f $outfile) {die "FATAL! Output file $outfile already exists!"}
 my($inputfile, $inputpath, $inputsuffix) = fileparse($inputvcf);
 
@@ -69,7 +69,7 @@ if ($inputvcf =~ /.vcf$/) {
 
 #Extract relevant values and generate table files for SNP/INDEL prediction, 1 for each sample in VCF. Multiallelic vars are not scored
 print "Reading file: $inputvcf...\n";
-my ($mykey, $headline, $mytag, $indelcount, $snpcount, $dropped, $output, $totalvars);
+my ($mykey, $headline, $mytag, $indelcount, $snpcount, $dropped, %output, $totalvars);
 
 while ($row=<IN>) {
 		next if ($row =~ /^##/); #Skip header lines
@@ -82,19 +82,19 @@ while ($row=<IN>) {
 			
 			foreach $mykey(@relevant) {$headline .= ",$mykey"}
 			for ($h=9; $h<=$#line; $h++) {
-				open (TABLE, ">$outpath/GARFIELD.$samples[$h].INDEL.table");			
+				open (TABLE, ">$outpath/GARFIELD.$samples[$h].INDEL.table");
 				print TABLE "var".$headline.",GQ\n";
 				close(TABLE);
-				open (TABLE, ">$outpath/GARFIELD.$samples[$h].SNP.table");			
+				open (TABLE, ">$outpath/GARFIELD.$samples[$h].SNP.table");
 				print TABLE "var".$headline.",GQ\n";
 				close(TABLE);
 								
-			}	
-			next;		
-		}	
+			}
+			next;
+		}
 	
 		$totalvars++;
-		$output = "";
+		undef %output;
 
 		chomp($row);
 		@line = split("\t", $row);
@@ -112,18 +112,27 @@ while ($row=<IN>) {
 		#Save GT values
 		my @format = split (":", $line[8]);
 
-		for ($h=9; $h<=$#line; $h++) {		
+		for ($h=9; $h<=$#line; $h++) {
 			my @values = split (":", $line[$h]);
 			for ($i=0; $i<=$#values; $i++) {
 				$GTS{$h}{$format[$i]}=$values[$i];
-			}	
+			}
 		}
 		
 		#Generate output
-		foreach $mykey(@relevant) {
-			if ($infos{$mykey} eq ".") {$infos{$mykey} = ""} #Manage missing values reported as . in VCF
-			$output .= ",$infos{$mykey}";
+		for ($h=9; $h<=$#line; $h++) {
+		  foreach $mykey(@relevant) {
+			  if ($infos{$mykey} eq ".") {$infos{$mykey} = ""}
+			  #Check if the required field exists in sample information, otherwise take it from general variant annotation
+			  if (exists $GTS{$h}{$mykey}) {
+			    if ($GTS{$h}{$mykey} eq ".") {$GTS{$h}{$mykey} = ""} else {$output{$h} .= ",$GTS{$h}{$mykey}"}
+			  } else {
+			    if ($infos{$mykey} eq ".") {$infos{$mykey} = ""} else {$output{$h} .= ",$infos{$mykey}"}
+			  }
+			    
+		  }
 		}
+		
 		$output = $line[0]."_".$line[1]."_".$line[3]."_".$line[4].$output;
 		for ($h=9; $h<=$#line; $h++) {
 			if ($line[4] =~ /,/) { #Drop variants with multiple alleles and save them in separate file
@@ -133,14 +142,14 @@ while ($row=<IN>) {
 				close(DROP);
 			} elsif (length($line[3]) == length($line[4])) { #Save SNP table
 				$snpcount++;
-				open (TABLE, ">>$outpath/GARFIELD.$samples[$h].SNP.table");			
-				print TABLE $output.",$GTS{$h}{GQ}\n";
+				open (TABLE, ">>$outpath/GARFIELD.$samples[$h].SNP.table");
+				print TABLE $output{$h}.",$GTS{$h}{GQ}\n";
 				close(TABLE);
 			} elsif (length($line[3]) != length($line[4])) { #Save INDEL table
 				$indelcount++;
-				open (TABLE, ">>$outpath/GARFIELD.$samples[$h].INDEL.table");			
-				print TABLE $output.",$GTS{$h}{GQ}\n";
-				close(TABLE);					
+				open (TABLE, ">>$outpath/GARFIELD.$samples[$h].INDEL.table");
+				print TABLE $output{$h}.",$GTS{$h}{GQ}\n";
+				close(TABLE);
 			}
 		}
 
@@ -183,7 +192,7 @@ my $toolheadline;
 foreach $myfile(@files) {
 	open(IN, $myfile);
 	$myfile =~ /GARFIELD.([^.]+)./;
-	my $sampleid = $1;	
+	my $sampleid = $1;
 	while ($row=<IN>) {
 		chomp($row);
 		@line = split(",", $row);
@@ -208,11 +217,11 @@ open(OUT, ">>$outfile");
 while ($row=<VCF>) {
 	if ($row =~ /^##/) {	#print header lines to output
 		print OUT $row;
-		next;	
+		next;
 	} elsif ($row =~ /^#CHROM/) {	#add GARFIELD to VCF INFO header
 		print OUT $toolheadline;
 		print OUT $row;
-		next;	
+		next;
 	}
 	chomp($row);
 	@line = split("\t", $row);
