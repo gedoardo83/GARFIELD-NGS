@@ -23,7 +23,7 @@ if ($help) {
 	print "########################################################################\n";
 	print "GARFIELD: Genomic vARiants FIltering by dEep Learning moDels\n";
 	print "By Viola Ravasio and Edoardo Giacopuzzi (edoardo.giacopuzzi\@unibs.it)\n";
-	print "Version 1.0\n\n";
+	print "Version 1.1\n\n";
 	print "USAGE: Predict.pl --input input.vcf[.gz] --output output.vcf --platform [illumina/ion]\n\n";
 	print "Add GARFIELD scores for each variants in INFO field in a new file (output.vcf).\n";
 	print "Prediction scores are marked as [Sample Name]_true=[value] in the output VCF.\n";
