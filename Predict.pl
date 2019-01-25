@@ -234,7 +234,7 @@ close(OUT);
 
 #Clean up temporary files
 print "Cleaning up temp files...\n\n";
-#system("rm $outpath/GARFIELD.*");
+system("rm $outpath/GARFIELD.*");
 
 my $end_time=time();
 
