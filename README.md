@@ -1,7 +1,7 @@
 # GARFIELD-NGS
 GARFIELD-NGS: Genomic vARiants FIltering by dEep Learning moDels in NGS
 <br> By Viola Ravasio and Edoardo Giacopuzzi (edoardo.giacopuzzi@unibs.it)
-Version 1.0
+Version 1.1
 
 USAGE: perl Predict.pl --input input.vcf[.gz] --output output.vcf --platform [illumina/ion]
 
