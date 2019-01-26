@@ -39,26 +39,35 @@ print "INFO:\tReading file $_ \n";
 #Check VCF input file existance
 if (!-f $_) {die "FATAL! File $_ does not exist!"}
 
+#Check VCF file format
+if ($_ =~ /.vcf$/) {
+        open (VCF, $_);
+} elsif ($_ =~ /.vcf.gz$/) {
+	#Check if bgzip is accessible to read .vcf.gz
+	system("which bgzip > /dev/null 2>&1");
+        if ($? != 0) {die "FATAL! Unable to launch bgzip. It is not installed or not in your path. bgzip needed to open .vcf.gz file\nError code: $!\n"}
+	open (VCF, "bgzip -dc $_ |");
+}
+
 #Read file
-open(IN, $_);
-while ($row=<IN>) {
-		next if ($row =~ /^##/); #Skip header lines
-		if ($row =~ /^#/) {
+while ($row=<VCF>) {
+	next if ($row =~ /^##/); #Skip header lines
+	if ($row =~ /^#/) {
 		  chomp($row);
 		  @line = split("\t", $row);
 		  $sampleid = $line[9]."_true";
 		  next;
-		}
+	}
 		
-		chomp($row);
-		@line = split("\t", $row);
-		$varid = $line[0]."_".$line[1]."_".$line[3]."_".$line[4];
+	chomp($row);
+	@line = split("\t", $row);
+	$varid = $line[0]."_".$line[1]."_".$line[3]."_".$line[4];
 		
-		#Extract GARFIELD score
-    $line[7] =~ /($sampleid=[0-9.]+)/;
-    push(@{$GARscore{$varid}}, $1);
+	#Extract GARFIELD score
+	$line[7] =~ /($sampleid=[0-9.]+)/;
+	push(@{$GARscore{$varid}}, $1);
 }
-close(IN);
+close(VCF);
 }
 
 print "\nAnnotating multi-sample VCF...\n";
@@ -67,18 +76,18 @@ print "\nAnnotating multi-sample VCF...\n";
 open(IN, $multivcf);
 open(OUT, $outfile);
 while ($row=<IN>) {
-		if ($row =~ /^#/) {
-		  print OUT $row #Print out header lines
-		  next;
-		}
+	if ($row =~ /^#/) {
+		print OUT $row; #Print out header lines
+		next;
+	}
 		
-		chomp($row);
-		@line = split("\t", $row);
-		$varid = $line[0]."_".$line[1]."_".$line[3]."_".$line[4];
+	chomp($row);
+	@line = split("\t", $row);
+	$varid = $line[0]."_".$line[1]."_".$line[3]."_".$line[4];
 		
-		#Extract GARFIELD score
-    $line[7] .= ";".join(";", @{$GARscore{$varid}});
-    print OUT join("\t", @line)."\n";
+	#Add GARFIELD scores to INFO column
+	$line[7] .= ";".join(";", @{$GARscore{$varid}});
+	print OUT join("\t", @line)."\n";
 }
 close(IN);
 close(OUT);
