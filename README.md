@@ -19,11 +19,11 @@ Predictions are made based on four deep learning models specifically trained on 
 Variants with score below filtering threshold should be considered as false positive. 
 
 ### Suggested CP thresholds for filtering:
-<br>**ION**       SNPs 0.139  INDELs 0.320
+**ION**       SNPs 0.139  INDELs 0.320
 <br>**Illumina**  SNPs 0.025  INDELs 0.630
 
 ### Suggestions for analysis of multi-sample files</bold>
-<br>GARFIELD-NGS is designed to score variants in VCF files generated from single sample data. We have tested the tool also on small multi-sample VCF up to three subjects (trio analysis). 
+GARFIELD-NGS is designed to score variants in VCF files generated from single sample data. We have tested the tool also on small multi-sample VCF up to three subjects (trio analysis). 
 <br>The best solution in this case is to use GARFIELD-NGS on the single-sample VCFs, merge the original files using vcftools, and then use the provided AddScoreToMultisample.pl script to annotate the merged VCF. The script takes single sample VCFs and the merged VCF as input and annotate the latter with GARFIELD-NGS scores from each sample.
 
 **Example:**
