@@ -74,7 +74,7 @@ print "\nAnnotating multi-sample VCF...\n";
 
 #Add GARFIELD scores to multi-sample VCF
 open(IN, $multivcf);
-open(OUT, $outfile);
+open(OUT, ">>$outfile");
 while ($row=<IN>) {
 	if ($row =~ /^#/) {
 		print OUT $row; #Print out header lines
